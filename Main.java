@@ -5,44 +5,32 @@ public class Main{
 }
 
 class Vertex{
+    Edge next;
+    Edge tail;
     String label;
     Vertex(String label){
         this.label = label;
-    }
-    Edge next;
-    void addEdge(Edge value){
-        next = value;
+        this.next = null;
+        this.tail=null;
     }
 }
 
 class Edge {
-    private String source;
-    private String destination;
-    private Edge next;
+    String source;
+    String destination;
+    Edge next;
 
     public Edge(String start,String end){
         source = start;
         destination = end;
     }
 
-    public String getSource() {
-        return source;
-    }
-
     public void setSource(String source) {
         this.source = source;
     }
 
-    public String getDestination() {
-        return destination;
-    }
-
     public void setDestination(String destination) {
         this.destination = destination;
-    }
-
-    public Edge getNext() {
-        return next;
     }
 
     public void setNext(Edge next) {
@@ -76,7 +64,13 @@ class Graph{
         try{
             // Handling Adjaceny List
             Edge edgeeee = new Edge(label,label_2);
-            vertixList[indexof(label)].next = edgeeee;
+            Vertex vertex=vertixList[indexof(label)];
+            addEnd(vertex,edgeeee);
+
+            edgeeee.setSource(label_2);
+            edgeeee.setDestination(label);
+            vertex = vertixList[indexof(label_2)];
+            addEnd(vertex, edgeeee);
 
             // handling Adjaceny matrix
             adjMatrix[indexof(label)][indexof(label_2)] = 1;
@@ -87,6 +81,19 @@ class Graph{
             return false;
         }
     }
+
+    private void addEnd(Vertex v, Edge e) {
+    if (v.tail == null) {
+        // If tail is null, it means the vertex is empty, so initialize both next and tail
+        v.next = e;
+        v.tail = e;
+    } else {
+        // If tail is not null, add the edge to the end
+        v.tail.next = e;
+        v.tail = e;
+    }
+}
+
     
 
 }
