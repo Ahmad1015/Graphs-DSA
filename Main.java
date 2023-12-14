@@ -20,8 +20,8 @@ class Graph{
         vertixList = new String[5];
     }
 
-    int indexof(String label){
-        for(int i=0;i<this.size;i++){
+    private int indexof(String label){
+        for(int i=0;i<this.elements;i++){
             if(vertixList[i].equals(label)){
                 return i;
             }
@@ -29,6 +29,9 @@ class Graph{
         return -1;
     }
 
+    boolean addNode(String label){
+        vertixList[elements].
+    }
     
 
 }
