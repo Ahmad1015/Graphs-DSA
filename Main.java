@@ -72,12 +72,12 @@ class Graph{
         return -1;
     }
 
-    boolean addNode(String label,String label_2){
+    boolean add(String label,String label_2){
         try{
             // Handling Adjaceny List
             Edge edgeeee = new Edge(label,label_2);
             vertixList[indexof(label)].next = edgeeee;
-            
+
             // handling Adjaceny matrix
             adjMatrix[indexof(label)][indexof(label_2)] = 1;
             adjMatrix[indexof(label_2)][indexof(label)] = 1;
