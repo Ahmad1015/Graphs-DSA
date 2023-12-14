@@ -5,7 +5,9 @@ public class Main{
 }
 class Node{
     String label;
-
+    Node(String label){
+        
+    }
 }
 class Graph{
     int elements;
@@ -30,7 +32,14 @@ class Graph{
     }
 
     boolean addNode(String label){
-        vertixList[elements].
+        try{
+            vertixList[elements] = label;
+            elements++;
+            return true;
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            return false;
+        }
     }
     
 
