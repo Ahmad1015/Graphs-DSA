@@ -1,8 +1,19 @@
 import java.util.*;
-
 public class Main{
     public static void main(String[] args){
+        Graph graph = new Graph();
 
+        // Add nodes to the graph
+        graph.addEdge("0","3");   
+        graph.addEdge("0", "2");  
+        graph.addEdge("1", "0");  
+        graph.addEdge("2", "1");         
+        graph.addEdge("3", "4");   
+        graph.addEdge("4", "0");
+
+        graph.BFS("0");
+        System.out.println();
+        graph.DFS("0");
     }
 }
 
@@ -11,29 +22,13 @@ public class Main{
 class Edge {
     String source;
     String destination;
-    String label;
-    Edge next;
 
-    public Edge(String Label,String start,String end){
-        label = Label;
+    public Edge(String start,String end){
         source = start;
         destination = end;
     }
 
-    public void setSource(String source) {
-        this.source = source;
-    }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setNext(Edge next) {
-        this.next = next;
-    }
-    public void setLabel(String text){
-        this.label = text;
-    }
 }
 
 class Graph{
@@ -57,7 +52,7 @@ class Graph{
     private int indexOf(String label){
     for(int i=0; i<vertixList.length; i++){
         for(Edge e : vertixList[i]){
-            if(e.label.equals(label)){
+            if(e.source.equals(label)){
                 return i;
             }
         }
@@ -66,39 +61,104 @@ class Graph{
 }
 
 
-    boolean add(String label,String label_2){
-        try{
-            // Handling Adjaceny List
-            Edge edgeeee = new Edge(label,label_2);
-            Vertex vertex=vertixList[indexof(label)];
-            addEnd(vertex,edgeeee);
-
-            edgeeee.setSource(label_2);
-            edgeeee.setDestination(label);
-            vertex = vertixList[indexof(label_2)];
-            addEnd(vertex, edgeeee);
-
-            // handling Adjaceny matrix
-            adjMatrix[indexof(label)][indexof(label_2)] = 1;
-            adjMatrix[indexof(label_2)][indexof(label)] = 1;
-            return true;
-        }
-        catch(ArrayIndexOutOfBoundsException e){
-            return false;
-        }
+    void addNode(String label) {
+    // Check if the node already exists
+    if(indexOf(label) != -1) {
+        System.out.println("Node already exists.");
+        return;
     }
- 
-    private void addEnd(Vertex v, Edge e) {
-    if (v.tail == null) {
-        // If tail is null, it means the vertex is empty, so initialize both next and tail
-        v.next = e;
-        v.tail = e;
-    } else {
-        // If tail is not null, add the edge to the end
-        v.tail.next = e;
-        v.tail = e;
-    }
+
+    // Add the node
+    vertixList[elements].add(new Edge(label, null));
+    elements++;
 }
+
+ 
+   void addEdge(String source, String dest) {
+    // Check if the nodes exist, if not, add them
+    if(indexOf(source) == -1) {
+        vertixList[elements].add(new Edge(source, null));
+        elements++;
+    }
+    if(indexOf(dest) == -1) {
+        vertixList[elements].add(new Edge(dest, null));
+        elements++;
+    }
+
+    // Create the edge
+    Edge edge = new Edge(source, dest);
+
+    // Add the edge to the adjacency list
+    vertixList[indexOf(source)].add(edge);
+
+    // Update the adjacency matrix
+    adjMatrix[indexOf(source)][indexOf(dest)] = 1;
+    adjMatrix[indexOf(dest)][indexOf(source)] = 1;
+}
+
+
+    void BFS(String start){
+        // Create a boolean array to keep track of visited nodes
+        boolean visited_arr[]= new boolean[this.size];
+        // Create a queue and add the start node to it
+        Queue<String> qq = new LinkedList<String>();
+        qq.add(start);
+        while(!qq.isEmpty()){
+            // Remove the front node from the queue
+            if(qq.peek()== null){
+                qq.remove();
+                continue;
+            }
+            String element = qq.remove();
+            int temp = indexOf(element);
+            // If the node has not been visited
+            if(!visited_arr[temp]){
+                // Print the node
+                System.out.print(element+" ");
+                // Mark the node as visited
+                visited_arr[temp] = true;
+                // For each edge from the current node
+                for(int i=0;i<vertixList[temp].size();i++){
+                    Edge e = vertixList[temp].get(i);
+                    // Add the destination node of the edge to the queue
+                    qq.add(e.destination);
+                }
+            }
+        }
+    }
+
+    // Function to perform Depth-First Search (DFS) on a graph
+    void DFS(String start){
+        // Create a boolean array to keep track of visited nodes
+        boolean visited_arr[]= new boolean[this.size];
+        // Create a queue and add the start node to it
+        Stack<String> ss = new Stack<>();
+        ss.add(start);
+        while(!ss.isEmpty()){
+            // Remove the front node from the queue
+            if(ss.peek()== null){
+                ss.pop();
+                continue;
+            }
+            String element = ss.pop();
+            int temp = indexOf(element);
+            // If the node has not been visited
+            if(!visited_arr[temp]){
+                // Print the node
+                System.out.print(element+" ");
+                // Mark the node as visited
+                visited_arr[temp] = true;
+                // For each edge from the current node
+                for(int i=0;i<vertixList[temp].size();i++){
+                    Edge e = vertixList[temp].get(i);
+                    // Add the destination node of the edge to the queue
+                    ss.add(e.destination);
+                }
+            }
+        }
+    }
+
+
 
     
 
