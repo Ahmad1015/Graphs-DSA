@@ -1,26 +1,21 @@
+import java.util.*;
+
 public class Main{
     public static void main(String[] args){
 
     }
 }
 
-class Vertex{
-    Edge next;
-    Edge tail;
-    String label;
-    Vertex(String label){
-        this.label = label;
-        this.next = null;
-        this.tail=null;
-    }
-}
+
 
 class Edge {
     String source;
     String destination;
+    String label;
     Edge next;
 
-    public Edge(String start,String end){
+    public Edge(String Label,String start,String end){
+        label = Label;
         source = start;
         destination = end;
     }
@@ -36,29 +31,40 @@ class Edge {
     public void setNext(Edge next) {
         this.next = next;
     }
+    public void setLabel(String text){
+        this.label = text;
+    }
 }
 
 class Graph{
     int elements;
     int size;
     int[][] adjMatrix;
-    Vertex[] vertixList;
+    ArrayList<Edge>[] vertixList;
 
     public Graph(){
         size=5;
         elements = 0;
-        adjMatrix = new int[5][5];
-        vertixList = new Vertex[5];
+
+        adjMatrix = new int[size][size];
+
+        vertixList = new ArrayList[size];               // Declaring the Size of Array of ArrayLists
+        for(int i=0;i<vertixList.length;i++){           // Handling the undefined State
+            vertixList[i] = new ArrayList<>();
+        }
     }
 
-    private int indexof(String label){
-        for(int i=0;i<this.elements;i++){
-            if(vertixList[i].label.equals(label)){
+    private int indexOf(String label){
+    for(int i=0; i<vertixList.length; i++){
+        for(Edge e : vertixList[i]){
+            if(e.label.equals(label)){
                 return i;
             }
         }
-        return -1;
     }
+    return -1;
+}
+
 
     boolean add(String label,String label_2){
         try{
