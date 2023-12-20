@@ -3,7 +3,6 @@
 import java.util.*;
 public class Graph{
     public static ArrayList<Edge>[] createGraph(ArrayList<Edge>[] graph) {
-        graph = new ArrayList[5];
         for(int i=0; i<graph.length; i++) {
             graph[i] = new ArrayList<>();
         }
