@@ -11,9 +11,8 @@ public class Main{
         graph.addEdge("3", "4");   
         graph.addEdge("4", "0");
 
-        graph.BFS("0");
-        System.out.println();
-        graph.DFS("0");
+        System.out.println(graph.lengthOfPath("0", "4"));
+        
     }
 }
 
@@ -97,7 +96,8 @@ class Graph{
 }
 
 
-    void BFS(String start){
+    String BFS(String start){
+        String str = "";
         // Create a boolean array to keep track of visited nodes
         boolean visited_arr[]= new boolean[this.size];
         // Create a queue and add the start node to it
@@ -114,7 +114,7 @@ class Graph{
             // If the node has not been visited
             if(!visited_arr[temp]){
                 // Print the node
-                System.out.print(element+" ");
+                str = str+element+" ";
                 // Mark the node as visited
                 visited_arr[temp] = true;
                 // For each edge from the current node
@@ -125,6 +125,7 @@ class Graph{
                 }
             }
         }
+        return str;
     }
 
     // Function to perform Depth-First Search (DFS) on a graph
@@ -158,5 +159,54 @@ class Graph{
         }
     }
 
+    boolean isNeighbour(String start,String end){
+        Stack<String> ss = new Stack<>();
+        for(int i=0;i<vertixList[indexOf(start)].size();i++){
+            Edge e = vertixList[indexOf(start)].get(i);
+            ss.add(e.destination);  
+        }
+        while(!ss.isEmpty()){
+            String temp = ss.pop();
+            if(temp == end)
+                return true;
+        }
+        return false;
+    }
+
+    boolean isPath(String start,String end){
+        boolean visited_arr[]= new boolean[this.size];
+        Queue<String> qq = new LinkedList<String>();
+        qq.add(start);
+        while(!qq.isEmpty()){
+            if(qq.peek()== null){
+                qq.remove();
+                continue;
+            }
+            String element = qq.remove();
+            int temp = indexOf(element);
+            if(!visited_arr[temp]){
+                if(element == end)
+                    return true;
+                // Mark the node as visited
+                visited_arr[temp] = true;
+                // For each edge from the current node
+                for(int i=0;i<vertixList[temp].size();i++){
+                    Edge e = vertixList[temp].get(i);
+                    // Add the destination node of the edge to the queue
+                    qq.add(e.destination);
+                }
+            }
+        }
+        return false;
+    }
+
+    int lengthOfPath(String start,String end){
+        int path = 0;
+        if(!isPath(start, end))
+            return path;
+        else{
+             ////////
+        }
+    }
 
 }
