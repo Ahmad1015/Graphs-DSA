@@ -15,25 +15,7 @@ public class Main {
         graph.addEdge(4, 3, 7);
         graph.addEdge(2, 1, 9);
         graph.addEdge(3, 2, 3);
-
-
-        for(int i=0;i<5;i++){
-            for(int j=0;j<5;j++){
-                System.out.print(graph.adjMatrix[i][j]);
-            }
-            System.out.println();
-        }
-
-        System.out.print("BFS: ");
-        String temp = graph.BFS("A");
-        System.out.println(temp);
-
-        System.out.print("DFS: ");
-        graph.DFS("A");
-        System.out.println();
-
-        String temp2 = graph.findPathBFS("A", "D");
-        System.out.println(temp2);
+       
     }
 }
 
@@ -139,8 +121,6 @@ class Graph {
         return path_temp;
     }
 
-    
-
     int getIndex(String name){
         for(int i=0;i<labels.length;i++){
             if(labels[i].equals(name)){
@@ -150,4 +130,34 @@ class Graph {
         return -1;
     }
 
+    boolean isNeighbour(String name_1,String name_2){
+        return (adjMatrix[getIndex(name_1)][getIndex(name_2)] != 0);
+    }
+
+    int degreeOfVertex(String ver){
+        int count =0;
+        for(int i=0;i<numVertices;i++){
+            if(adjMatrix[getIndex(ver)][i] != 0)
+                count++;
+        }
+        return count;
+    }
+
+    boolean isSource(String vertex){    // has outgoing edges but no incoming edges  - checking vertically , if from any node connection is made to checking node -- false is returned
+        int j = getIndex(vertex);
+        for(int i=0;i<numVertices;i++){
+            if(adjMatrix[i][j] != 0)
+                return false;
+        }
+        return true;
+    }
+
+    boolean isSink(String vertex){  // has incoming edges but no outgoing edges   -- so checking horizontally -- if Weight was found - return false
+        int j = getIndex(vertex);
+        for(int i=0;i<numVertices;i++){
+            if(adjMatrix[j][i] != 0)
+                return false;
+        }
+        return true;
+    }
 }
