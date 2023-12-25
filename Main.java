@@ -51,6 +51,7 @@ class Graph {
 
     public void addEdge(int i, int j, int weight) {
         adjMatrix[i][j] = weight;
+        // adjMatrix[j][i] = weight;  For undirected graphs
     }
 
     public void addNode(int i, String label) {
