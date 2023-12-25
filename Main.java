@@ -1,212 +1,152 @@
 import java.util.*;
-public class Main{
-    public static void main(String[] args){
-        Graph graph = new Graph();
 
-        // Add nodes to the graph
-        graph.addEdge("0","3");   
-        graph.addEdge("0", "2");  
-        graph.addEdge("1", "0");  
-        graph.addEdge("2", "1");         
-        graph.addEdge("3", "4");   
-        graph.addEdge("4", "0");
+public class Main {
+    public static void main(String[] args) {
+        Graph graph = new Graph(5);
 
-        System.out.println(graph.lengthOfPath("0", "4"));
-        
+        graph.addNode(0, "A");
+        graph.addNode(1, "B");
+        graph.addNode(2, "C");
+        graph.addNode(3, "D");
+        graph.addNode(4, "E");
+
+        graph.addEdge(0, 1, 2);
+        graph.addEdge(0, 4, 5);
+        graph.addEdge(4, 3, 7);
+        graph.addEdge(2, 1, 9);
+        graph.addEdge(3, 2, 3);
+
+
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                System.out.print(graph.adjMatrix[i][j]);
+            }
+            System.out.println();
+        }
+
+        System.out.print("BFS: ");
+        String temp = graph.BFS("A");
+        System.out.println(temp);
+
+        System.out.print("DFS: ");
+        graph.DFS("A");
+        System.out.println();
+
+        String temp2 = graph.findPathBFS("A", "D");
+        System.out.println(temp2);
     }
 }
 
 
-
-class Edge {
-    String source;
-    String destination;
-
-    public Edge(String start,String end){
-        source = start;
-        destination = end;
-    }
-
-
-}
-
-class Graph{
-    int elements;
-    int size;
+class Graph {
     int[][] adjMatrix;
-    ArrayList<Edge>[] vertixList;
+    int numVertices;
+    String[] labels;
 
-    public Graph(){
-        size=5;
-        elements = 0;
+    public Graph(int numVertices) {
+        this.numVertices = numVertices;
+        adjMatrix = new int[numVertices][numVertices];
+        labels = new String[numVertices];
+    }
 
-        adjMatrix = new int[size][size];
+    public void addEdge(int i, int j, int weight) {
+        adjMatrix[i][j] = weight;
+    }
 
-        vertixList = new ArrayList[size];               // Declaring the Size of Array of ArrayLists
-        for(int i=0;i<vertixList.length;i++){           // Handling the undefined State
-            vertixList[i] = new ArrayList<>();
+    public void addNode(int i, String label) {
+        labels[i] = label;
+    }
+
+    public String BFS(String startVertex) {
+        boolean[] visited = new boolean[numVertices];
+        Queue<Integer> queue = new LinkedList<>();
+        String order = "";
+
+        queue.add(getIndex(startVertex));
+
+        while (!queue.isEmpty()) {
+            int vertex = queue.remove();
+            if (!visited[vertex]) {
+                visited[vertex] = true;
+                order += labels[vertex] + " ";
+
+                for (int i = 0; i < numVertices; i++) {
+                    if (adjMatrix[vertex][i] > 0 && !visited[i]) {
+                        queue.add(i);
+                    }
+                }
+            }
+        }
+
+        return order.trim();
+}
+
+    public void DFS(String startVertex) {
+        boolean[] visited = new boolean[numVertices];
+        Stack<Integer> stack = new Stack<>();
+
+        stack.push(getIndex(startVertex));
+
+        while (!stack.isEmpty()) {
+            int vertex = stack.pop();
+            if (!visited[vertex]) {
+                visited[vertex] = true;
+                System.out.print(labels[vertex] + " ");
+
+                for (int i = 0; i < numVertices; i++) {
+                    if (adjMatrix[vertex][i] > 0 && !visited[i]) {
+                        stack.push(i);
+                    }
+                }
+            }
         }
     }
 
-    private int indexOf(String label){
-    for(int i=0; i<vertixList.length; i++){
-        for(Edge e : vertixList[i]){
-            if(e.source.equals(label)){
+    public String findPathBFS(String startLabel, String endLabel) {
+        int startVertex = -1;
+        int endVertex = -1;
+        String bfsResult = BFS(startLabel);
+        if (bfsResult == null) {
+            return "The vertex " + startLabel + " doesn't exist.";
+        }
+
+        String[] path = bfsResult.split(" ");
+
+        for(int i=0; i<path.length; i++){
+            if(path[i].equals(String.valueOf(startLabel)))
+                startVertex = i;
+            if(path[i].equals(String.valueOf(endLabel)))
+                endVertex = i;
+        }
+
+        if (startVertex == -1) {
+            return "The vertex " + startLabel + " doesn't exist.";
+        }
+
+        if (endVertex == -1) {
+            return "The vertex " + endLabel + " doesn't exist.";
+        }
+
+        if (startVertex > endVertex) {
+            return "The path doesn't exist.";
+        }
+        
+        String path_temp = "";
+        for(int i=startVertex; i<=endVertex; i++){
+            path_temp = path_temp + path[i] + " ";
+        }
+        return path_temp;
+    }
+
+    
+
+    int getIndex(String name){
+        for(int i=0;i<labels.length;i++){
+            if(labels[i].equals(name)){
                 return i;
             }
         }
-    }
-    return -1;
-}
-
-
-    void addNode(String label) {
-    // Check if the node already exists
-    if(indexOf(label) != -1) {
-        System.out.println("Node already exists.");
-        return;
-    }
-
-    // Add the node
-    vertixList[elements].add(new Edge(label, null));
-    elements++;
-}
-
- 
-   void addEdge(String source, String dest) {
-    // Check if the nodes exist, if not, add them
-    if(indexOf(source) == -1) {
-        vertixList[elements].add(new Edge(source, null));
-        elements++;
-    }
-    if(indexOf(dest) == -1) {
-        vertixList[elements].add(new Edge(dest, null));
-        elements++;
-    }
-
-    // Create the edge
-    Edge edge = new Edge(source, dest);
-
-    // Add the edge to the adjacency list
-    vertixList[indexOf(source)].add(edge);
-
-    // Update the adjacency matrix
-    adjMatrix[indexOf(source)][indexOf(dest)] = 1;
-    adjMatrix[indexOf(dest)][indexOf(source)] = 1;
-}
-
-
-    String BFS(String start){
-        String str = "";
-        // Create a boolean array to keep track of visited nodes
-        boolean visited_arr[]= new boolean[this.size];
-        // Create a queue and add the start node to it
-        Queue<String> qq = new LinkedList<String>();
-        qq.add(start);
-        while(!qq.isEmpty()){
-            // Remove the front node from the queue
-            if(qq.peek()== null){
-                qq.remove();
-                continue;
-            }
-            String element = qq.remove();
-            int temp = indexOf(element);
-            // If the node has not been visited
-            if(!visited_arr[temp]){
-                // Print the node
-                str = str+element+" ";
-                // Mark the node as visited
-                visited_arr[temp] = true;
-                // For each edge from the current node
-                for(int i=0;i<vertixList[temp].size();i++){
-                    Edge e = vertixList[temp].get(i);
-                    // Add the destination node of the edge to the queue
-                    qq.add(e.destination);
-                }
-            }
-        }
-        return str;
-    }
-
-    // Function to perform Depth-First Search (DFS) on a graph
-    void DFS(String start){
-        // Create a boolean array to keep track of visited nodes
-        boolean visited_arr[]= new boolean[this.size];
-        // Create a queue and add the start node to it
-        Stack<String> ss = new Stack<>();
-        ss.add(start);
-        while(!ss.isEmpty()){
-            // Remove the front node from the queue
-            if(ss.peek()== null){
-                ss.pop();
-                continue;
-            }
-            String element = ss.pop();
-            int temp = indexOf(element);
-            // If the node has not been visited
-            if(!visited_arr[temp]){
-                // Print the node
-                System.out.print(element+" ");
-                // Mark the node as visited
-                visited_arr[temp] = true;
-                // For each edge from the current node
-                for(int i=0;i<vertixList[temp].size();i++){
-                    Edge e = vertixList[temp].get(i);
-                    // Add the destination node of the edge to the queue
-                    ss.add(e.destination);
-                }
-            }
-        }
-    }
-
-    boolean isNeighbour(String start,String end){
-        Stack<String> ss = new Stack<>();
-        for(int i=0;i<vertixList[indexOf(start)].size();i++){
-            Edge e = vertixList[indexOf(start)].get(i);
-            ss.add(e.destination);  
-        }
-        while(!ss.isEmpty()){
-            String temp = ss.pop();
-            if(temp == end)
-                return true;
-        }
-        return false;
-    }
-
-    boolean isPath(String start,String end){
-        boolean visited_arr[]= new boolean[this.size];
-        Queue<String> qq = new LinkedList<String>();
-        qq.add(start);
-        while(!qq.isEmpty()){
-            if(qq.peek()== null){
-                qq.remove();
-                continue;
-            }
-            String element = qq.remove();
-            int temp = indexOf(element);
-            if(!visited_arr[temp]){
-                if(element == end)
-                    return true;
-                // Mark the node as visited
-                visited_arr[temp] = true;
-                // For each edge from the current node
-                for(int i=0;i<vertixList[temp].size();i++){
-                    Edge e = vertixList[temp].get(i);
-                    // Add the destination node of the edge to the queue
-                    qq.add(e.destination);
-                }
-            }
-        }
-        return false;
-    }
-
-    int lengthOfPath(String start,String end){
-        int path = 0;
-        if(!isPath(start, end))
-            return path;
-        else{
-             ////////
-        }
+        return -1;
     }
 
 }
